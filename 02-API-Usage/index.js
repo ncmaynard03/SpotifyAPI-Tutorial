@@ -68,7 +68,7 @@ app.get('/callback', async (req, res) => {
     accessToken = response.data.access_token; // Store the access token
     var str = 'Access Token: ' + accessToken
     console.log(str);
-    res.send(str);
+    res.redirect('/profile');
   } catch (error) {
     console.error('Error getting token:', error);
     res.send('Error getting token');
