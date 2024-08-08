@@ -1,17 +1,26 @@
+
 import axios from 'axios';
 import express from 'express';
 import crypto from 'crypto';
 import querystring from 'querystring';
 import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
 // Load environment variables
 dotenv.config();
 
 const app = express();
+app.use(express.static('public'));
+app.use(express.json());
+
 const port = 8080;
 
 const clientId = process.env.SPOTIFY_CLIENT_ID;
 const redirectUri = process.env.SPOTIFY_REDIRECT_URI;
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Helper function to generate random string
 const generateRandomString = (length) => {
@@ -68,7 +77,7 @@ app.get('/callback', async (req, res) => {
     accessToken = response.data.access_token; // Store the access token
     var str = 'Access Token: ' + accessToken
     console.log(str);
-    res.redirect('/profile');
+    res.redirect('/home');
   } catch (error) {
     console.error('Error getting token:', error);
     res.send('Error getting token');
@@ -76,26 +85,56 @@ app.get('/callback', async (req, res) => {
 });
 
 // New route to fetch user profile information
-app.get('/profile', async (req, res) => {
+app.get('/home', async (req, res) => {
   if (!accessToken) {
     res.send('Error: No access token available');
     return;
   }
 
-  try {
-    const response = await axios.get('https://api.spotify.com/v1/me/player', {
-      headers: {
-        'Authorization': `Bearer ${accessToken}`,
-      },
-    });
+  res.sendFile(path.join(__dirname, 'public', 'home.html'));
+});
 
-    console.log('User Profile:', response.data);
-    res.json(response.data); // Send the user profile information as JSON
+app.post('/search', async (req, res) => {
+  console.log('\n\n/search post')
+  if (!accessToken) {
+    res.status(401).send('Error: No access token available');
+    return;
+  }
+
+  const query = req.body.query;
+
+  if (!query) {
+    res.status(400).send('Error: No search query provided');
+    return;
+  }
+  
+  try {
+    const response = await axios.get('https://api.spotify.com/v1/search', {
+      headers: {
+        'Authorization': `Bearer ${accessToken}`
+      },
+      params: {
+        'q': query,
+        'type': 'artist,track',
+      }
+    });
+  
+    var artists = response.data.artists.items;
+    var tracks = response.data.tracks.items;
+
+    artists.forEach(artist => {
+      console.log(artist.name);
+    })
+    console.log("\n\n")
+    res.json(response.data); 
   } catch (error) {
     console.error('Error fetching user profile:', error);
     res.send('Error fetching user profile');
   }
+
 });
+
+
 
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
