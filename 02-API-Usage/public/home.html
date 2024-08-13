@@ -15,15 +15,21 @@
             <button id="search-button">Search</button>
         </div>
         <div>
-            <input type="number" id="max-saved" value="25" step="1" />
+            <input type="number" id="max-saved" value="1" step="1" />
         </div>
         <div>
             <button id="all-saved-tracks">All Tracks</button>
-            <button id="n-saved-tracks">25 Tracks</button>
+            <button id="n-saved-tracks">1 Tracks</button>
+        </div>
+        <div>
+            <button id="all-saved-albums">All Albums</button>
+            <button id="n-saved-albums">1 Albums</button>
         </div>
     </div>
 
-    <script src="app.js"></script>
+    <script type="module" src="app.js"></script>
+    <script type="module" scr="apiInterface.js"></script>
+    <script type="module" scr="library.js"></script>
 </body>
 
 </html>
