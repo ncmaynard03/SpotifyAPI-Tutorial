@@ -69,15 +69,15 @@ app.get('/callback', async (req, res) => {
 
   try {
     const response = await axios.post(tokenUrl, params, {
-      headers: {
+      headers: {  
         'Content-Type': 'application/x-www-form-urlencoded',
       },
     });
-
     accessToken = response.data.access_token; // Store the access token
     var str = 'Access Token: ' + accessToken
     console.log(str);
-    res.redirect('/home');
+    res.redirect('/home?token=' + accessToken);
+    
   } catch (error) {
     console.error('Error getting token:', error);
     res.send('Error getting token');
@@ -136,45 +136,6 @@ app.post('/search', async (req, res) => {
 
 });
 
-app.post('/saved-albums', async (req, res) => {
-  let fetchUrl = "https://api.spotify.com/v1/me/albums";
-  let allAlbums = [];
-  var limit = req.body.limit || 0;
-
-  if (limit == 0) {
-    console.log("Received all saved album request");
-  } else {
-    console.log(`received ${limit} page saved album request`)
-  }
-
-  while (fetchUrl) {
-    try {
-      const response = await axios.get(fetchUrl, {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-        params: {
-          limit: 50,
-        },
-      });
-
-      allAlbums = allAlbums.concat(response.data.items); // Collect all albums
-      fetchUrl = response.data.next; // Update fetchUrl to the next page
-      if (limit > 0) {
-        limit -= 1;
-        if (limit == 0) {
-          fetchUrl = null;
-        }
-      }
-    } catch (error) {
-      console.error("Failed to fetch albums:", error);
-      break;
-    }
-  }
-
-  console.log(`Pulled ${allAlbums.length} albums from Spotify`);
-  res.json(allAlbums); // Send all albums to the client
-});
 
 
 app.listen(port, () => {

@@ -1,6 +1,20 @@
 import Library from './library.js'
 document.addEventListener('DOMContentLoaded', async () => {
-	const library = new Library();
+	function getQueryParam(name) {
+		const urlParams = new URLSearchParams(window.location.search);
+		return urlParams.get(name);
+	}
+  
+	// Store the access token in localStorage
+	const accessToken = getQueryParam('token');
+	if (accessToken) {
+		localStorage.setItem('spotifyAccessToken', accessToken);
+	}
+
+	// Now you can use the access token for API requests
+	console.log('Access token stored:', localStorage.getItem('spotifyAccessToken'));
+
+	const library = new Library(accessToken);
 
 	const searchButton = document.getElementById('search-button');
 	const allTracksButton = document.getElementById('all-saved-tracks');
@@ -18,10 +32,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 		var res = library.getAlbums();
 		displayAlbums(res);
 	})
-
 	
 	nAlbumsButton.addEventListener('click', async () => {
-		var res = await library.getAlbums(maxSaved.value)
+		var res = await library.getAlbums()
+		console.log("albums response: \n" )
 		displayAlbums(res);
 	})
 	
@@ -42,8 +56,8 @@ function displayAlbums(res) {
 	var str = ''
 	var i = 0;
 	console.log(res);
-	res.forEach(element => {
-		str += `${`${++i}.`.padEnd(3)} ${element.album.artists[0].name}   -   ${element.album.name}\n`
-	});
-	console.log(str);
+	// res.forEach(element => {
+	// 	str += `${`${++i}.`.padEnd(3)} ${element.album.artists[0].name}   -   ${element.album.name}\n`
+	// });
+	// console.log(str);
 }
