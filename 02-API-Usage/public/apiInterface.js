@@ -27,14 +27,14 @@ export default class ApiInterface {
         }
     }
 
-    async requestAlbums(limit=50, offset=198) {
+    async requestAlbums(pageLimit=50, offset=198) {
         let fetchUrl = "https://api.spotify.com/v1/me/albums";
         let allAlbums = [];
       
-        if (limit == 0) {
+        if (pageLimit == 0) {
           console.log("Received all saved album request");
         } else {
-          console.log(`received ${limit} page saved album request`)
+          console.log(`received ${pageLimit} page saved album request`)
         }
               
         while (fetchUrl) {
@@ -44,7 +44,7 @@ export default class ApiInterface {
                       Authorization: `Bearer ${this.accessToken}`,
                     },
                     params: {
-                      limit: limit,
+                      limit: pageLimit,
                       offset: offset
                     },
                   });
@@ -52,9 +52,9 @@ export default class ApiInterface {
             
                 allAlbums = allAlbums.concat(response.data.items); // Collect all albums
                 fetchUrl = response.data.next; // Update fetchUrl to the next page
-                if (limit > 0) {
-                    limit -= 1;
-                    if (limit == 0) {
+                if (pageLimit > 0) {
+                    pageLimit -= 1;
+                    if (pageLimit == 0) {
                         fetchUrl = null;
                     }   
                 }
