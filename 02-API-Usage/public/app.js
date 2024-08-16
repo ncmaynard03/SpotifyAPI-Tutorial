@@ -18,7 +18,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 		var res = library.getAlbums();
 		displayAlbums(res);
 	})
-
 	
 	nAlbumsButton.addEventListener('click', async () => {
 		var res = await library.getAlbums(maxSaved.value)
@@ -34,8 +33,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 	})
 
 });
-
-
 
 function displayAlbums(res) {
 	console.log("Display albums: \n" );

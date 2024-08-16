@@ -1,6 +1,5 @@
 export default class ApiInterface {
-    constructor(pageLimit=0) {
-        this.pageLimit = pageLimit;
+    constructor() {
     }
 
     async requestSearch(query) {
@@ -26,7 +25,7 @@ export default class ApiInterface {
         }
     }
 
-    async requestAlbums(limit=0) {
+    async requestAlbums(limit=0, offset) {
         if (limit == 0) {
             console.log('\nPosting all saved album request')
         } else {
@@ -39,9 +38,10 @@ export default class ApiInterface {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({
-                    'limit': limit
-                })
+                body: {
+                    'limit': limit,
+                    'offset': offset
+                }
             }
             );
             const data = await response.json()
