@@ -9,14 +9,13 @@
 </head>
 
 <body>
-    <div 
     <div id="input">
         <div>
             <input type="text" id="search-query"></input>
             <button id="search-button">Search</button>
         </div>
         <div>
-            <input type="number" id="max-saved" value="50" step="1" />
+            <input type="number" id="max-pages" value="1" step="1" />
         </div>
         <div>
             <button id="all-saved-tracks">All Tracks</button>
@@ -31,6 +30,7 @@
     <script type="module" src="app.js"></script>
     <script type="module" scr="apiInterface.js"></script>
     <script type="module" scr="library.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </body>
 
 </html>

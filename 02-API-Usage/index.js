@@ -47,7 +47,6 @@ app.get('/login', (req, res) => {
     code_challenge: codeChallenge,
   });
 
-  console.log("redirecting to spotify login...");
   res.redirect(`${authUrl}?${params}`);
 });
 
@@ -70,14 +69,15 @@ app.get('/callback', async (req, res) => {
 
   try {
     const response = await axios.post(tokenUrl, params, {
-      headers: {
+      headers: {  
         'Content-Type': 'application/x-www-form-urlencoded',
       },
     });
-
     accessToken = response.data.access_token; // Store the access token
-    console.log("redirecting to homepage...\n")
-    res.redirect('/home');
+    var str = 'Access Token: ' + accessToken
+    console.log(str);
+    res.redirect('/home?token=' + accessToken);
+    
   } catch (error) {
     console.error('Error getting token:', error);
     res.send('Error getting token');
@@ -92,6 +92,51 @@ app.get('/home', async (req, res) => {
 
   res.sendFile(path.join(__dirname, 'public', 'home.html'));
 });
+
+app.post('/search', async (req, res) => {
+  console.log('\n\n/search post:')
+  if (!accessToken) {
+    res.status(401).send('Error: No access token available');
+    return;
+  }
+
+  const query = req.body.query;
+
+  if (!query) {
+    res.status(400).send('Error: No search query provided');
+    return;
+  }
+
+  console.log('query: ' + query);
+
+  try {
+    const response = await axios.get('https://api.spotify.com/v1/search', {
+      headers: {
+        'Authorization': `Bearer ${accessToken}`
+      },
+      params: {
+        'q': query,
+        'type': 'artist,track',
+      }
+    });
+
+    var artists = response.data.artists.items;
+    var tracks = response.data.tracks.items;
+
+    var str = 'response: '
+    artists.forEach(artist => {
+      str += artist.name + '\n';
+    })
+    console.log(str);
+    res.json(response.data);
+  } catch (error) {
+    console.error('Error fetching user profile:', error);
+    res.send('Error fetching user profile');
+  }
+
+});
+
+
 
 app.listen(port, () => {
   console.log(`Server running at http://localhost:${port}`);
