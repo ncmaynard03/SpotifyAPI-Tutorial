@@ -21,17 +21,17 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 	const library = new Library(accessToken);
 
-	const searchButton = document.getElementById('search-button');
+	// const searchButton = document.getElementById('search-button');
 	const allTracksButton = document.getElementById('all-saved-tracks');
 	const nTracksButton = document.getElementById('n-saved-tracks');
 	const allAlbumsButton = document.getElementById('all-saved-albums');
 	const nAlbumsButton = document.getElementById('n-saved-albums');
-	const maxPages = document.getElementById('max-pages')
+	const maxPages = 1
 
-	searchButton.addEventListener('click', async () => {
-		data.tracks.items.map(track => console.log(track.name));
-		console.log();
-	})
+	// searchButton.addEventListener('click', async () => {
+	// 	data.tracks.items.map(track => console.log(track.name));
+	// 	console.log();
+	// })
 
 	allAlbumsButton.addEventListener('click', async () => {
 		var res = await library.getAlbums();
@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 	})
 
 	nAlbumsButton.addEventListener('click', async () => {
-		var res = await library.getAlbums(maxPages.value)
+		var res = await library.getAlbums(maxPages)
 		displayAlbums(res);
 	})
 
@@ -49,16 +49,16 @@ document.addEventListener('DOMContentLoaded', async () => {
 	})
 
 	nTracksButton.addEventListener(`click`,  async () => {
-		var res = await library.getTracks(maxPages.value)
+		var res = await library.getTracks(maxPages)
 		displayTracks(res);
 	})
 
-	maxPages.addEventListener('input', () => {
-		maxPages.value = maxPages.value.replace('/[^0-9/g]', '');
-		maxPages.value = Math.max(0, Math.min(500, maxPages.value));
-		nTracksButton.innerText = '' + (maxPages.value * 50) + " tracks";
-		nAlbumsButton.innerText = '' + (maxPages.value * 50) + " albums"
-	})
+	// maxPages.addEventListener('input', () => {
+	// 	maxPages.value = maxPages.value.replace('/[^0-9/g]', '');
+	// 	maxPages.value = Math.max(0, Math.min(500, maxPages.value));
+	// 	nTracksButton.innerText = '' + (maxPages.value * 50) + " tracks";
+	// 	nAlbumsButton.innerText = '' + (maxPages.value * 50) + " albums"
+	// })
 
 });
 

@@ -32,7 +32,7 @@ export default class Library {
 
     }
 
-    async getTracks(limit) {
+    async getTracks(limit) { 
         console.log(`Library.getTracks(limit: ${limit})`)
         var totalTracks = this.tracks.size
         await this.pullTracks(limit, totalTracks);
