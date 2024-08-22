@@ -95,17 +95,15 @@
   
   
   .artist, .album, .track {
-    display: grid;
-    grid-template-columns: auto 1fr 33%; /* Three columns: image, info, buttons */
-    gap: 5px; /* Space between columns */
-    align-items: center;
-    padding: 5px;
-    width: 100%; /* Ensure each item takes the full width of the parent */
-    border: 3px solid #ccc0;
-    /* background-color: #f9f9f9; */
-    margin-bottom: 10px; /* Space between rows */
-    box-sizing: border-box;
-  }
+      display: flex;
+      flex-direction: row; /* Stack the items vertically */
+      align-items: center;
+      padding: 5px;
+      width: 100%; /* Ensure each item takes the full width of the parent */
+      border: 3px solid #ccc0;
+      margin-bottom: 10px; /* Space between rows */
+      box-sizing: border-box;
+    }
   
   /* Optional: Style selected items */
   .selected {

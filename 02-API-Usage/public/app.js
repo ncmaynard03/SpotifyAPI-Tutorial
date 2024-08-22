@@ -20,65 +20,131 @@ document.addEventListener('DOMContentLoaded', async () => {
 	console.log('Access token stored:', localStorage.getItem('spotifyAccessToken'));
 
 	const library = new Library(accessToken);
+	fastPullDisplay();
 
-	// const searchButton = document.getElementById('search-button');
-	const allTracksButton = document.getElementById('all-saved-tracks');
-	const nTracksButton = document.getElementById('n-saved-tracks');
-	const allAlbumsButton = document.getElementById('all-saved-albums');
-	const nAlbumsButton = document.getElementById('n-saved-albums');
-	const maxPages = 1
 
-	// searchButton.addEventListener('click', async () => {
-	// 	data.tracks.items.map(track => console.log(track.name));
-	// 	console.log();
-	// })
+	const artistList = document.getElementById('artist-list')
+	const albumList = document.getElementById('album-list')
+	const trackList = document.getElementById(`track-list`)
 
-	allAlbumsButton.addEventListener('click', async () => {
-		var res = await library.getAlbums();
-		displayAlbums(res);
-	})
 
-	nAlbumsButton.addEventListener('click', async () => {
-		var res = await library.getAlbums(maxPages)
-		displayAlbums(res);
-	})
+	async function fastPullDisplay() {
+		var allTracksPulled = false;
+		var allAlbumsPulled = false;
+		var count = 0;
 
-	allTracksButton.addEventListener('click', async () => {
-		var res = await library.getTracks();
-		displayTracks(res);
-	})
+		while (!allTracksPulled || !allAlbumsPulled) {
+			if (!allTracksPulled) {
+				count = await library.pullTracks(3);
+				if (count == 0) { allTracksPulled = true }
+			}
+			if (!allAlbumsPulled) {
+				count = await library.pullAlbums(1);
+				if (count == 0) { allAlbumsPulled = true }
+			}
+			display();
+		}
+	}
 
-	nTracksButton.addEventListener(`click`,  async () => {
-		var res = await library.getTracks(maxPages)
-		displayTracks(res);
-	})
+	function display() {
+		displayArtists();
+		displayAlbums();
+		displayTracks();
+	}
 
-	// maxPages.addEventListener('input', () => {
-	// 	maxPages.value = maxPages.value.replace('/[^0-9/g]', '');
-	// 	maxPages.value = Math.max(0, Math.min(500, maxPages.value));
-	// 	nTracksButton.innerText = '' + (maxPages.value * 50) + " tracks";
-	// 	nAlbumsButton.innerText = '' + (maxPages.value * 50) + " albums"
-	// })
+	function displayArtists() {
+		console.log("Display Artists: \n");
+		let artists = library.getArtists()
+		artistList.innerHTML = ""
+		artists.forEach(artist => {
 
+			const artistDiv = document.createElement("div");
+			artistDiv.className = "artist";
+			artistDiv.setAttribute("key", artist.id);
+
+			const artistNameP = document.createElement("p");
+			artistNameP.className = "artist-name";
+			artistNameP.innerHTML = `<b>${artist.name}</b>`
+
+			artistDiv.appendChild(artistNameP)
+
+			artistList.appendChild(artistDiv);
+		}
+		)
+
+	}
+
+	function displayAlbums() {
+		console.log("Display albums: \n");
+		let albums = library.getAlbums()
+		albumList.innerHTML = ""
+		albums.forEach(album => {
+
+			const albumDiv = document.createElement("div");
+			albumDiv.className = "album";
+			albumDiv.setAttribute("key", album.id);
+
+			const img = document.createElement("img")
+			img.src = album.imageUrl;
+			img.alt = album.name
+			albumDiv.appendChild(img)
+
+			const albumInfoDiv = document.createElement("div");
+
+			const albumNameP = document.createElement("p");
+			albumNameP.className = "album-name";
+			albumNameP.innerHTML = `<b>${album.name}</b>`
+
+			albumInfoDiv.appendChild(albumNameP);
+
+			const artistNameP = document.createElement("p");
+			artistNameP.className = "artist-name";
+			artistNameP.innerHTML = album.artist.name;
+			albumInfoDiv.appendChild(artistNameP);
+
+			albumDiv.appendChild(albumInfoDiv)
+
+			albumList.appendChild(albumDiv);
+		}
+		)
+
+
+	}
+
+	function displayTracks() {
+		console.log("Display tracks:\n");
+		let tracks = library.getTracks();
+		trackList.innerHTML = ""
+		tracks.forEach(track => {
+
+			const trackDiv = document.createElement("div");
+			trackDiv.className = "track";
+			trackDiv.setAttribute("key", track.id);
+
+			const img = document.createElement("img")
+			img.src = track.album.imageUrl;
+			img.alt = track.album.name
+			trackDiv.appendChild(img)
+
+			const albumInfoDiv = document.createElement("div");
+
+			const trackNameP = document.createElement("p");
+			trackNameP.innerHTML = `<b>${track.name}</b>`
+			albumInfoDiv.appendChild(trackNameP);
+
+			const albumNameP = document.createElement("p");
+			albumNameP.innerHTML = track.album.name;
+			albumInfoDiv.appendChild(albumNameP);
+
+			const artistNameP = document.createElement("p");
+			artistNameP.innerHTML = `${track.artist}`;
+			albumInfoDiv.appendChild(artistNameP);
+
+			trackDiv.appendChild(albumInfoDiv)
+
+			trackList.appendChild(trackDiv);
+		})
+	}
 });
 
-function displayAlbums(res) {
-	console.log("Display albums: \n");
-	var str = ''
-	var i = 0;
-	// console.log(res);
-	res.forEach(album => {
-		str += `${`${++i}.`.padEnd(3)} ${album.artists[0].name}   -   ${album.name}\n`
-	});
-	console.log(str);
-}
 
-function displayTracks(res) {
-	console.log("Display tracks:\n");
-	var str = ''
-	var i = 0;
-	res.forEach(track => {
-		str += `${`${++i}.`.padEnd(3)} ${track.name}  -   ${track.artists[0].name}\n`
-	});
-	console.log(str);
-}
