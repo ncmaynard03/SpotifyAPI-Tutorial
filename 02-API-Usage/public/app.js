@@ -3,7 +3,6 @@ import Library from './library.js'
 document.addEventListener('DOMContentLoaded', async () => {
 	console.log("Home.html DOM Loaded")
 
-
 	function getQueryParam(name) {
 		const urlParams = new URLSearchParams(window.location.search);
 		return urlParams.get(name);
@@ -21,7 +20,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 	const library = new Library(accessToken);
 	fastPullDisplay();
-
 
 	const artistList = document.getElementById('artist-list')
 	const albumList = document.getElementById('album-list')
@@ -53,7 +51,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 	}
 
 	function displayArtists() {
-		console.log("Display Artists: \n");
 		let artists = library.getArtists()
 		artistList.innerHTML = ""
 		artists.forEach(artist => {
@@ -61,6 +58,26 @@ document.addEventListener('DOMContentLoaded', async () => {
 			const artistDiv = document.createElement("div");
 			artistDiv.className = "artist";
 			artistDiv.setAttribute("key", artist.id);
+
+			var selected = library.selectedArtistIds;
+
+			if (selected.includes(artist.id)) {
+				artistDiv.classList.add("selected");
+			}
+
+			artistDiv.addEventListener("click", (e) => {
+				library.handleArtistClick(artist.id, e.ctrlKey);
+
+				if (!e.ctrlKey) {
+					document.querySelectorAll('.artist.selected').forEach(el => {
+						el.classList.remove('selected');
+					});
+				}
+
+				artistDiv.classList.toggle("selected", library.selectedArtistIds.includes(artist.id));
+				displayAlbums();
+				displayTracks();
+			});
 
 			const artistNameP = document.createElement("p");
 			artistNameP.className = "artist-name";
@@ -75,7 +92,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 	}
 
 	function displayAlbums() {
-		console.log("Display albums: \n");
 		let albums = library.getAlbums()
 		albumList.innerHTML = ""
 		albums.forEach(album => {
@@ -83,6 +99,21 @@ document.addEventListener('DOMContentLoaded', async () => {
 			const albumDiv = document.createElement("div");
 			albumDiv.className = "album";
 			albumDiv.setAttribute("key", album.id);
+
+			albumDiv.addEventListener("click", (e) => {
+				library.handleAlbumClick(album.id, e.ctrlKey);
+
+				// Remove selected class from all elements if Ctrl is not pressed
+				if (!e.ctrlKey) {
+					document.querySelectorAll('.album.selected').forEach(el => {
+						el.classList.remove('selected');
+					});
+				}
+
+				// Toggle the selected class on the clicked element
+				albumDiv.classList.toggle("selected", library.selectedAlbumIds.includes(album.id));
+				displayTracks()
+			});
 
 			const img = document.createElement("img")
 			img.src = album.imageUrl;
@@ -108,11 +139,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 		}
 		)
 
-
 	}
 
 	function displayTracks() {
-		console.log("Display tracks:\n");
 		let tracks = library.getTracks();
 		trackList.innerHTML = ""
 		tracks.forEach(track => {
@@ -120,6 +149,22 @@ document.addEventListener('DOMContentLoaded', async () => {
 			const trackDiv = document.createElement("div");
 			trackDiv.className = "track";
 			trackDiv.setAttribute("key", track.id);
+
+			trackDiv.addEventListener('click', (e) => {
+				library.handleTrackClick(track, e.ctrlKey);
+
+				// Remove selected class from all elements if Ctrl is not pressed
+				if (!e.ctrlKey) {
+					document.querySelectorAll('.track.selected').forEach(el => {
+						el.classList.remove('selected');
+					});
+				}
+
+				// Toggle the selected class on the clicked element
+				trackDiv.classList.toggle("selected", library.selectedTrackIds.includes(track.id));
+				// renderTracks()
+
+			})
 
 			const img = document.createElement("img")
 			img.src = track.album.imageUrl;
