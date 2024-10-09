@@ -1,37 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
+  <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Spotify Auth</title>
     <link href="app.css" rel="stylesheet" type="text/css" />
-</head>
-
-<body>
-    <div id="input">
-        <div>
-            <input type="text" id="search-query"></input>
-            <button id="search-button">Search</button>
-        </div>
-        <div>
-            <input type="number" id="max-saved" value="1" step="1" />
-        </div>
-        <div>
-            <button id="all-saved-tracks">All Tracks</button>
-            <button id="n-saved-tracks">1 Tracks</button>
-        </div>
-        <div>
-            <button id="all-saved-albums">All Albums</button>
-            <button id="n-saved-albums">1 Albums</button>
-        </div>
+  </head>
+  <body>
+    <div class="App-header">
+      <h1>SpotiFly</h1>
     </div>
 
+    <div id="context-menu">
+    </div><div id="content-section">
+      <div class="artists-container">
+        <h2>Saved Artists</h2>
+        <div class="filter-menu">
+          <p>Sort by:</p>
+          <button id="artists-sort-button">Name</button>
+          <p>Reversed</p>
+          <input type="checkbox" id="artists-reversed"/>
+        </div>
+        <div id="artist-list" class="artists-list"></div>
+      </div>
+
+      <div class="albums-container">
+        <h2>Saved Albums</h2>
+        <div class="filter-menu">
+            <!-- <button id="all-saved-albums">All Albums</button> -->
+            <!-- <button id="n-saved-albums">50 Albums</button> -->
+        </div>
+        <div id="album-list" class="albums-list"></div>
+      </div>
+
+      <div class="tracks-container">
+        <h2>Saved tracks</h2>
+        <div class="filter-menu">
+            <!-- <button id="all-saved-tracks">All Tracks</button> -->
+            <!-- <button id="n-saved-tracks">50 Tracks</button> -->
+        </div>
+        <div id="track-list" class="tracks-list"></div>
+      </div>
+    </div>
+    
     <script type="module" src="app.js"></script>
     <script type="module" scr="apiInterface.js"></script>
     <script type="module" scr="library.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    
-</body>
-
+  </body>
 </html>

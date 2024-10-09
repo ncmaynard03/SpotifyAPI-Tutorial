@@ -127,7 +127,7 @@ app.post('/search', async (req, res) => {
     artists.forEach(artist => {
       str += artist.name + '\n';
     })
-    console.log(+ str);
+    console.log(str);
     res.json(response.data);
   } catch (error) {
     console.error('Error fetching user profile:', error);

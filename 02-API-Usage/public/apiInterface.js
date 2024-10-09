@@ -2,6 +2,7 @@
 export default class ApiInterface {
     constructor(accessToken) {
         this.accessToken = accessToken;
+        console.log("new API Interface with token: " + accessToken)
     }
 
     async requestSearch(query) {
@@ -27,36 +28,37 @@ export default class ApiInterface {
         }
     }
 
-    async requestAlbums(pageLimit=50, offset=198) {
+    async requestAlbums(pages, offset) {
         let fetchUrl = "https://api.spotify.com/v1/me/albums";
         let allAlbums = [];
-      
-        if (pageLimit == 0) {
-          console.log("Received all saved album request");
+
+        if (pages == 0) {
+            console.log("Received all saved album request");
         } else {
-          console.log(`received ${pageLimit} page saved album request`)
+            console.log(`received ${pages} page saved album request`)
         }
-              
+
         while (fetchUrl) {
             try {
                 const response = await axios.get(fetchUrl, {
                     headers: {
-                      Authorization: `Bearer ${this.accessToken}`,
+                        Authorization: `Bearer ${this.accessToken}`,
                     },
                     params: {
-                      limit: pageLimit,
-                      offset: offset
+                        limit: 50,
+                        offset: offset
                     },
-                  });
+                });
 
-            
-                allAlbums = allAlbums.concat(response.data.items); // Collect all albums
+                const albumsOnly = response.data.items.map(item => item.album);
+                allAlbums = allAlbums.concat(albumsOnly);
+
                 fetchUrl = response.data.next; // Update fetchUrl to the next page
-                if (pageLimit > 0) {
-                    pageLimit -= 1;
-                    if (pageLimit == 0) {
+                if (pages > 0) {
+                    pages -= 1;
+                    if (pages == 0) {
                         fetchUrl = null;
-                    }   
+                    }
                 }
             } catch (error) {
                 console.error("Failed to fetch albums:", error);
@@ -65,5 +67,46 @@ export default class ApiInterface {
         }
 
         return allAlbums;
+    }
+
+    async requestTracks(pages, offset){
+        let fetchUrl = "https://api.spotify.com/v1/me/tracks";
+        let allTracks = [];
+
+        if (pages == 0) {
+            console.log("Received all saved track request");
+        } else {
+            console.log(`received ${pages} page saved track request`)
+        }
+
+        while (fetchUrl) {
+            try {
+                const response = await axios.get(fetchUrl, {
+                    headers: {
+                        Authorization: `Bearer ${this.accessToken}`,
+                    },
+                    params: {
+                        limit: 50,
+                        offset: offset
+                    },
+                });
+
+                const tracksOnly = response.data.items.map(item => item.track);
+                allTracks = allTracks.concat(tracksOnly);
+
+                fetchUrl = response.data.next; 
+                if (pages > 0) {
+                    pages -= 1;
+                    if (pages == 0) {
+                        fetchUrl = null;
+                    }
+                }
+            } catch (error) {
+                console.error("Failed to fetch tracks:", error);
+                break;
+            }
+        }
+
+        return allTracks;
     }
 }
